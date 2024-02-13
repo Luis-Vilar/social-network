@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { MESSAGES } from '@nestjs/core/constants';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
