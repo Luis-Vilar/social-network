@@ -17,9 +17,8 @@ export class ValidationPipe implements PipeTransform<any> {
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
-      const constraints = errors.map((error) => error.constraints);
-      const constraintsMessages = constraints.map((constraint) =>
-        Object.values(constraint).join(', '),
+      const constraintsMessages = errors.map((error) =>
+        Object.values(error.constraints).join(', '),
       );
       throw new BadRequestException(
         `Validation failed: ${constraintsMessages}`,
