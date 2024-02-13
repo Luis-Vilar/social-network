@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { MESSAGES } from '@nestjs/core/constants';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
@@ -16,7 +17,13 @@ export class ValidationPipe implements PipeTransform<any> {
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
-      throw new BadRequestException('Validation failed');
+      const constraints = errors.map((error) => error.constraints);
+      const constraintsMessages = constraints.map((constraint) =>
+        Object.values(constraint).join(', '),
+      );
+      throw new BadRequestException(
+        `Validation failed: ${constraintsMessages}`,
+      );
     }
     return value;
   }
