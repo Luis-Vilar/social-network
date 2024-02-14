@@ -7,9 +7,14 @@ import { CreateUserDto } from './dto';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async user(email: string): Promise<User | null> {
+  async userByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { email: email },
+    });
+  }
+  async userById(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id: id },
     });
   }
 
