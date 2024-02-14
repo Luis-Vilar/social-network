@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -9,6 +10,7 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -58,5 +60,19 @@ export class UserController {
     //eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...user } = userExists;
     return user;
+  }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Delete('user/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteUser(@Request() req): Promise<UserModel> {
+    const isUserOnRequest = req.user;
+    console.log(isUserOnRequest);
+    const idOfAuthenticatedUser = req.user.sub as string;
+    const deletedUser = await this.userService.deleteUser({
+      id: idOfAuthenticatedUser,
+    });
+
+    return deletedUser;
   }
 }
