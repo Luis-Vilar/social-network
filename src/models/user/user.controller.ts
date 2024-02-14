@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User as UserModel } from '@prisma/client';
-import { AuthGuard } from '../../auth/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UserService } from './user.service';
 @ApiTags('User')
