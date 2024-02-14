@@ -14,6 +14,7 @@ async function bootstrap() {
       `${description} developed by ${author} under ${license} license.`,
     )
     .setVersion(version)
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
