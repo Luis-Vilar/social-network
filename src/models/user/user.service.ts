@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { CreateUserDto } from './dto';
@@ -53,8 +57,20 @@ export class UserService {
   }
 
   async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.delete({
+    const userExists = await this.prisma.user.findUnique({
       where,
     });
+    if (!userExists) {
+      throw new NotFoundException('User does not exist');
+    }
+    const deleted = this.prisma.user.delete({
+      where,
+    });
+    if (!deleted) {
+      throw new InternalServerErrorException(
+        'User not deleted, try again later',
+      );
+    }
+    return deleted;
   }
 }
