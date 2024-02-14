@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -13,7 +14,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { User as UserModel } from '@prisma/client';
 import { AuthGuard } from '../auth/auth.guard';
-import { CreateUserDto, UpdateUserDto } from './dto';
+import { CreateUserDto, UpdateUserDto, UserWhitoutPasswordDto } from './dto';
 import { UserService } from './user.service';
 @ApiTags('User')
 @Controller()
@@ -45,5 +46,17 @@ export class UserController {
     const userUpdated = this.userService.updateUser({ id, data: userData });
 
     return userUpdated;
+  }
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Get('user/:id')
+  async getUser(@Param('id') id: string): Promise<UserWhitoutPasswordDto> {
+    const userExists = await this.userService.userById(id);
+    if (!userExists) {
+      throw new NotFoundException('User does not exist');
+    }
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...user } = userExists;
+    return user;
   }
 }
